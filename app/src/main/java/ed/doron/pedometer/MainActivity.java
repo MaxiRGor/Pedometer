@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setStepLengthEditText(EditText stepLengthEditText) {
         stepLengthEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        stepLengthEditText.setHint(String.format(getString(R.string.current_step_length), Preferences.getStepCount(MainActivity.this)));
+        stepLengthEditText.setHint(String.format(getString(R.string.current_step_length), Preferences.getStepLength(MainActivity.this)));
         stepLengthEditText.setOnFocusChangeListener((view, focused) -> {
             if (focused)
                 stepLengthEditText.setText(String.valueOf(Preferences.getStepLength(MainActivity.this)));
@@ -263,8 +263,9 @@ public class MainActivity extends AppCompatActivity {
             stepCounterService = binder.getService();
 
             stepCounterService.stepCount.observe(MainActivity.this, integer -> viewModel.setStepCount(integer));
-            viewModel.getStepCount().observe(MainActivity.this, integer -> Log.d("myLogs", "steps from mainActivity " + integer));
 
+            Preferences.setStepCount(MainActivity.this, stepCounterService.stepCount.getValue());
+            Preferences.updateInfoOnFirestore(MainActivity.this);
         }
 
         @Override

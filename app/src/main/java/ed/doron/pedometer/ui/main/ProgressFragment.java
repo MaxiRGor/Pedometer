@@ -36,7 +36,7 @@ public class ProgressFragment extends Fragment {
         final CircularProgressBar circularProgressBar = view.findViewById(R.id.circularProgressBar);
         final TextView progressStepCountTextView = view.findViewById(R.id.progress_step_count_text_view);
         final TextView progressStepLimitTextView = view.findViewById(R.id.progress_step_limit_text_view);
-        final TextView progrressDistanceTextView = view.findViewById(R.id.progress_distance_text_view);
+        final TextView progressDistanceTextView = view.findViewById(R.id.progress_distance_text_view);
         Log.d("myLogs", "here" + pedometerViewModel.getStepCount().getValue());
         pedometerViewModel.getStepLimit().observe(this, integer -> {
             circularProgressBar.setProgressMax(integer);
@@ -46,7 +46,7 @@ public class ProgressFragment extends Fragment {
             Log.d("myLogs", "step count is " + integer);
             circularProgressBar.setProgress(integer);
             progressStepCountTextView.setText(String.valueOf(integer));
-            progrressDistanceTextView.setText(String.format(getString(R.string.progress_distance_info)
+            progressDistanceTextView.setText(String.format(getString(R.string.progress_distance_info)
                     , pedometerViewModel.getStepLength().getValue()
                     , getDistance(integer, pedometerViewModel.getStepLength().getValue())));
         });

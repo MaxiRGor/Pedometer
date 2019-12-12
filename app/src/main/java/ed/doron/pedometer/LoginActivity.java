@@ -1,5 +1,6 @@
 package ed.doron.pedometer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,11 +9,18 @@ import android.util.Log;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
@@ -73,7 +81,13 @@ public class LoginActivity extends AppCompatActivity {
                     // Successfully signed in
                     Log.d(TAG, response.toString());
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    startMainActivity();
+                    if (user != null) {
+                        checkIfUserDocumentExistsOnFirestore(user.getUid());
+                        // initializeSparedPreferences(user.getUid());
+                        // initializeFirestoreUserDocument(user.getUid());
+                        //startMainActivity();
+                    }
+
                     // ...
                 } else {
                     // Sign in failed. If response is null the user canceled the
@@ -88,4 +102,60 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    private void initializeSparedPreferences(String uid, boolean isDayMode, long stepCount, long stepLength, long stepLimit) {
+        Preferences.setUserDocumentId(LoginActivity.this, uid);
+        Preferences.setDayMode(LoginActivity.this, isDayMode);
+        Preferences.setStepCount(LoginActivity.this, (int) stepCount);
+        Preferences.setStepLength(LoginActivity.this, (int) stepLength);
+        Preferences.setStepLimit(LoginActivity.this, (int) stepLimit);
+
+        startMainActivity();
+    }
+
+    private void checkIfUserDocumentExistsOnFirestore(String uid) {
+        FirebaseFirestore.getInstance()
+                .collection(this.getString(R.string.firestore_collection_user_settings))
+                .document(uid)
+                .get().addOnCompleteListener(task -> {
+            Log.d("myLogs", "finding user...");
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().get(this.getString(R.string.firestore_field_is_day_mode)) != null) {
+                Log.d("myLogs", "user found");
+                DocumentSnapshot snapshot = task.getResult();
+                /*                        UserSetting userSetting = task.getResult().getDocumentReference().*//*.getDocuments().get(0).toObject(UserSetting.class);*//*
+                        if (userSetting != null) {
+                            Log.d("myLogs","user found");
+                            Log.d("myLogs",userSetting.toString());
+                            initializeSparedPreferences(task.getResult().getDocuments().get(0).getId()
+                                    , userSetting.isDayMode()
+                                    , userSetting.getStepCount()
+                                    , userSetting.getStepLength()
+                                    , userSetting.getStepLimit());
+                        }*/
+                initializeSparedPreferences(uid
+                        , (boolean) snapshot.get(this.getString(R.string.firestore_field_is_day_mode))
+                        , (long) snapshot.get(this.getString(R.string.firestore_field_step_count))
+                        , (long) snapshot.get(this.getString(R.string.firestore_field_step_length))
+                        , (long) snapshot.get(this.getString(R.string.firestore_field_step_limit))
+                );
+
+            } else {
+                Log.d("myLogs", "user not found");
+                initializeSparedPreferences(uid, true, 0, 60, 6000);
+            }
+
+        });
+    }
+
+/*    private void initializeFirestoreUserDocument(String uid) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put(this.getString(R.string.firestore_field_user_uid), uid);
+        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                .collection(this.getString(R.string.firestore_collection_user_settings))
+                .document();
+        documentReference.set(data);
+
+        startMainActivity();
+    }*/
 }

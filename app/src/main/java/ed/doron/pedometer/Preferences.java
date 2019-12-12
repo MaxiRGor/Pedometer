@@ -4,11 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+
 public class Preferences {
     // Identify Shared Preference Store
-   final static String PREFS_NAME = "pedometerPreferences";
+    final static String PREFS_NAME = "pedometerPreferences";
 
     //private final static String IS_SERVICE_RUNNING = "isServiceRunning";
+    private final static String USER_DOCUMENT_ID = "userDocumentId";
     private final static String STEP_COUNT = "stepCount";
     private final static String STEP_LENGTH = "stepLength";
     private final static String STEP_LIMIT = "stepLimit";
@@ -26,6 +33,18 @@ public class Preferences {
     }
 */
 
+    static String getUserDocumentId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        return prefs.getString(USER_DOCUMENT_ID, "");
+    }
+
+    static void setUserDocumentId(Context context, String userDocumentId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString(Preferences.USER_DOCUMENT_ID, userDocumentId);
+        prefsEditor.apply();
+    }
+
     public static int getStepCount(Context context) {
         return getIntValue(context, STEP_COUNT);
     }
@@ -35,7 +54,7 @@ public class Preferences {
         Log.d("myLogs", "saving steps " + String.valueOf(steps));
     }
 
-     public static int getStepLength(Context context) {
+    public static int getStepLength(Context context) {
         return getIntValue(context, STEP_LENGTH);
     }
 
@@ -43,7 +62,7 @@ public class Preferences {
         setIntValue(context, STEP_LENGTH, length);
     }
 
-     public  static int getStepLimit(Context context) {
+    public static int getStepLimit(Context context) {
         return getIntValue(context, STEP_LIMIT);
     }
 
@@ -51,7 +70,7 @@ public class Preferences {
         setIntValue(context, STEP_LIMIT, limit);
     }
 
-     public static boolean getDayMode(Context context) {
+    public static boolean getDayMode(Context context) {
         return getBooleanValue(context);
     }
 
@@ -73,7 +92,7 @@ public class Preferences {
 
     private static int getIntValue(Context context, String key) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getInt(key, 0);
+        return prefs.getInt(key, 222);
     }
 
     private static void setIntValue(Context context, String key, Integer value) {
@@ -83,7 +102,17 @@ public class Preferences {
         prefsEditor.apply();
     }
 
-    public void uptateInfoOnFirestore(){
-
+    public static void updateInfoOnFirestore(Context context) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put(context.getString(R.string.firestore_field_is_day_mode), getDayMode(context));
+            data.put(context.getString(R.string.firestore_field_step_count), getStepCount(context));
+            data.put(context.getString(R.string.firestore_field_step_length), getStepLength(context));
+            data.put(context.getString(R.string.firestore_field_step_limit), getStepLimit(context));
+            DocumentReference documentReference = FirebaseFirestore.getInstance()
+                    .collection(context.getString(R.string.firestore_collection_user_settings))
+                    .document(getUserDocumentId(context));
+            documentReference.set(data);
+        }
     }
 }
