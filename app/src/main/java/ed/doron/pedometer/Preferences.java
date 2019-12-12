@@ -102,7 +102,7 @@ public class Preferences {
         prefsEditor.apply();
     }
 
-    public static void updateInfoOnFirestore(Context context) {
+    public static void updateUserSettingsOnFirestore(Context context) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             HashMap<String, Object> data = new HashMap<>();
             data.put(context.getString(R.string.firestore_field_is_day_mode), getDayMode(context));
@@ -115,4 +115,19 @@ public class Preferences {
             documentReference.set(data);
         }
     }
+
+    public static void calculateDailyProgress(Context context) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put(context.getString(R.string.firestore_field_is_day_mode), getDayMode(context));
+            data.put(context.getString(R.string.firestore_field_step_count), getStepCount(context));
+            data.put(context.getString(R.string.firestore_field_step_length), getStepLength(context));
+            data.put(context.getString(R.string.firestore_field_step_limit), getStepLimit(context));
+            DocumentReference documentReference = FirebaseFirestore.getInstance()
+                    .collection(context.getString(R.string.firestore_collection_user_settings))
+                    .document(getUserDocumentId(context));
+            documentReference.set(data);
+        }
+    }
+
 }

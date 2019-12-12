@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,9 +19,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.Calendar;
+import java.util.Timer;
+
 import ed.doron.pedometer.Sensor.StepDetector;
 
-public class StepCounterService extends Service implements SensorEventListener, StepListener {
+public class StepCounterService extends Service implements SensorEventListener, StepListener, OnNewDayStartedListener {
 
     // Notifications
     private static final int NOTIFY_ID = 42;
@@ -74,7 +78,37 @@ public class StepCounterService extends Service implements SensorEventListener, 
 
         startForeground(NOTIFY_ID, notification);
 
+        setScheduledTask();
+
     }
+
+
+    private void setScheduledTask() {
+        Calendar currentDate = Calendar.getInstance();
+        Calendar dueDate = Calendar.getInstance();
+
+        // Set Execution to 00:00:00 AM
+        dueDate.set(Calendar.HOUR_OF_DAY, 0);
+        dueDate.set(Calendar.MINUTE, 0);
+        dueDate.set(Calendar.SECOND, 0);
+
+        if (dueDate.before(currentDate)) {
+            dueDate.add(Calendar.HOUR_OF_DAY, 24);
+        }
+        //in final product replace with 1 day (1000 * 60 * 60 * 24)
+        long repeatTime = 1000 * 30;   //now == 30 seconds
+
+        //in final product replace uncomment
+        //long delay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        long delay = 0;
+
+        Timer time = new Timer();
+        CalculateDayResultsScheduledTask st = new CalculateDayResultsScheduledTask(stepCount, StepCounterService.this);
+        time.schedule(st, delay, repeatTime);
+    }
+
+
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -136,6 +170,12 @@ public class StepCounterService extends Service implements SensorEventListener, 
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public void reset() {
+        Log.d("myLogs", "reseted");
+        this.stepCount.postValue(0);
     }
 
     class LocalBinder extends Binder {

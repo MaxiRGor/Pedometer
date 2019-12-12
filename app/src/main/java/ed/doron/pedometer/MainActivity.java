@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unbindService(connection);
+        Preferences.updateUserSettingsOnFirestore(MainActivity.this);
     }
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             stepCounterService.stepCount.observe(MainActivity.this, integer -> viewModel.setStepCount(integer));
 
             Preferences.setStepCount(MainActivity.this, stepCounterService.stepCount.getValue());
-            Preferences.updateInfoOnFirestore(MainActivity.this);
+            Preferences.updateUserSettingsOnFirestore(MainActivity.this);
         }
 
         @Override
