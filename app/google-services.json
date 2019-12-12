@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "112800807594",
+    "firebase_url": "https://eddiespedometer.firebaseio.com",
+    "project_id": "eddiespedometer",
+    "storage_bucket": "eddiespedometer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112800807594:android:20f11b0c9b9aa24db4eed3",
+        "android_client_info": {
+          "package_name": "ed.doron.pedometer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112800807594-bu2pnfqa8l2p422op8rv6314tg0bqqgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ed.doron.pedometer",
+            "certificate_hash": "c8e62f2bd3b70100eb73c5f522393262093ec5f5"
+          }
+        },
+        {
+          "client_id": "112800807594-iq77mcalt3afoisdf19505tb9icj585j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBttAOKByCAIUiDGfUufUsKzuGVsd7Ljc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112800807594-iq77mcalt3afoisdf19505tb9icj585j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

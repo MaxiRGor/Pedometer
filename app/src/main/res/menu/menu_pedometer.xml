@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_step_limit"
+        android:icon="@drawable/ic_purpose"
+        android:orderInCategory="1"
+        android:title="@string/step_limit"
+        app:actionViewClass="android.widget.EditText"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_step_length"
+        android:icon="@drawable/ic_step"
+        android:orderInCategory="2"
+        android:title="@string/step_length"
+        app:actionViewClass="android.widget.EditText"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_day_night"
+        android:orderInCategory="3"
+        android:title="@string/night"
+        android:icon="@drawable/ic_light"
+        app:actionViewClass="android.widget.Switch"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_sign_out"
+        android:orderInCategory="4"
+        android:title="@string/sign_out"
+        app:showAsAction="ifRoom|collapseActionView" />
+</menu>
