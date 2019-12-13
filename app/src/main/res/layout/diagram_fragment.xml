@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/diagram_swipe_refresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DiagramFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/diagram_line_chart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="164dp"
+            android:layout_marginBottom="256dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </com.github.mikephil.charting.charts.LineChart>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

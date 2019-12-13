@@ -122,10 +122,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void changePageTitle(int position) {
         switch (position) {
-            case 1:
+            case 0:
                 toolbar.setTitle(R.string.progress);
                 break;
-            case 2:
+            case 1:
                 toolbar.setTitle(R.string.statistics);
                 break;
             default:

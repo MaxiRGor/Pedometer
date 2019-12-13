@@ -181,13 +181,13 @@ public class StepCounterService extends Service implements SensorEventListener, 
     @Override
     public void reset() {
         Log.d("myLogs", "reseted");
-        this.stepCount.postValue(0);
 
         AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "database").build();
 
         database.getDayResultDao()
                 .insertResult(new DayResult(new Date().getTime(), Preferences.getStepLength(this), Preferences.getStepLimit(this), this.stepCount.getValue()));
 
+        this.stepCount.postValue(0);
 
     }
 
