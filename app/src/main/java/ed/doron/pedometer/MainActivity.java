@@ -25,10 +25,17 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import ed.doron.pedometer.adapters.FragmentsPagerAdapter;
 import ed.doron.pedometer.data.PedometerViewModel;
 import ed.doron.pedometer.data.Preferences;
+import ed.doron.pedometer.models.AppDatabase;
+import ed.doron.pedometer.models.DayResult;
 import ed.doron.pedometer.services.StepCounterService;
 
 public class MainActivity extends AppCompatActivity {
@@ -90,17 +97,35 @@ public class MainActivity extends AppCompatActivity {
                 // We've bound to StepCounterService, cast the IBinder and get StepCounterService instance
                 StepCounterService.LocalBinder binder = (StepCounterService.LocalBinder) service;
                 stepCounterService = binder.getService();
-
                 stepCounterService.stepCount.observe(MainActivity.this, integer -> viewModel.setStepCount(integer));
-
                 Preferences.setStepCount(MainActivity.this, stepCounterService.stepCount.getValue());
-                Preferences.updateUserSettingsOnFirestore(MainActivity.this);
+                if (stepCounterService.isNetworkAvailable()) synchronizeDataWithFirestore();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
             }
         };
+    }
+
+    private void synchronizeDataWithFirestore() {
+        Preferences.updateUserSettingsOnFirestore(MainActivity.this);
+        ArrayList<DayResult> notSyncedDayResults = (ArrayList<DayResult>) AppDatabase.getDatabase(this).getDayResultDao().getNotSyncedResults();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            for (DayResult result : notSyncedDayResults) {
+                HashMap<String, Object> data = new HashMap<>();
+                data.put(this.getString(R.string.firestore_field_user_uid), uid);
+                data.put(this.getString(R.string.firestore_field_time), result.getTime());
+                data.put(this.getString(R.string.firestore_field_step_count), result.getStepCount());
+                data.put(this.getString(R.string.firestore_field_step_length), result.getStepLength());
+                data.put(this.getString(R.string.firestore_field_step_limit), result.getStepLimit());
+                FirebaseFirestore.getInstance()
+                        .collection(this.getString(R.string.firestore_collection_user_results))
+                        .document()
+                        .set(data);
+            }
+        }
     }
 
     private void initializeViewModel() {
@@ -252,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener(task -> {
+                            AppDatabase.getDatabase(MainActivity.this).getDayResultDao().deleteTable();
                             //start LoginActivity
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(intent);

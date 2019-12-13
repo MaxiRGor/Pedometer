@@ -1,66 +1,45 @@
 package ed.doron.pedometer.models;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //@SuppressWarnings("unused")
 @Entity
 public class DayResult {
 
-
-    @Ignore
-    int id;
-    @Ignore
-    String documentId;
     @PrimaryKey
-    long date;
-    int stepSize;
-    int stepLimit;
-    int stepCount;
-    @Ignore
-    String uid;
+    private long time;
+    private int stepLength;
+    private int stepLimit;
+    private int stepCount;
+    private boolean synced;
 
-    public DayResult(long date, int stepLength, int stepLimit, int stepCount) {
-        this.date = date;
-        this.stepSize = stepLength;
+
+    public DayResult(long time, int stepLength, int stepLimit, int stepCount, boolean synced) {
+        this.time = time;
+        this.stepLength = stepLength;
         this.stepLimit = stepLimit;
         this.stepCount = stepCount;
+        this.synced = synced;
     }
 
     public DayResult() {
     }
 
-    public int getId() {
-        return id;
+    public long getTime() {
+        return time;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTime(long time) {
+        this.time = time;
     }
 
-    public String getDocumentId() {
-        return documentId;
+    public int getStepLength() {
+        return stepLength;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public void setDate(long date) {
-        this.date = date;
-    }
-
-    public int getStepSize() {
-        return stepSize;
-    }
-
-    public void setStepSize(int stepSize) {
-        this.stepSize = stepSize;
+    public void setStepLength(int stepLength) {
+        this.stepLength = stepLength;
     }
 
     public int getStepLimit() {
@@ -79,12 +58,13 @@ public class DayResult {
         this.stepCount = stepCount;
     }
 
-    public String getUid() {
-        return uid;
+    public boolean isSynced() {
+        return synced;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setSynced(boolean synced) {
+        this.synced = synced;
     }
+
 
 }

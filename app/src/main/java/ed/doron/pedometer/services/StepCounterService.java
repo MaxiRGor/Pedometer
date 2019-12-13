@@ -4,23 +4,34 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
-import androidx.room.Room;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 
 import ed.doron.pedometer.CalculateDayResultsScheduledTask;
@@ -108,7 +119,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
 
         //in final product replace uncomment
         //long initDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        long initDelay = repeatTime;
+        long initDelay = repeatTime - 1;
 
         Timer time = new Timer();
         CalculateDayResultsScheduledTask st = new CalculateDayResultsScheduledTask(stepCount, StepCounterService.this);
@@ -179,16 +190,57 @@ public class StepCounterService extends Service implements SensorEventListener, 
     }
 
     @Override
-    public void reset() {
-        Log.d("myLogs", "reseted");
-
-        AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "database").build();
-
-        database.getDayResultDao()
-                .insertResult(new DayResult(new Date().getTime(), Preferences.getStepLength(this), Preferences.getStepLimit(this), this.stepCount.getValue()));
-
+    public void startNewDay() {
+        Log.d("myLogs", "new day started )))");
+        int currentStepValue = stepCount.getValue();
         this.stepCount.postValue(0);
+        addDayResultToFirestore(currentStepValue);
+    }
 
+    private void addDayResultToFirestore(int steps) {
+        long time = new Date().getTime();
+        int length = Preferences.getStepLength(this);
+        int limit = Preferences.getStepLimit(this);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && isNetworkAvailable()) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put(this.getString(R.string.firestore_field_user_uid), FirebaseAuth.getInstance().getCurrentUser().getUid());
+            data.put(this.getString(R.string.firestore_field_time), time);
+            data.put(this.getString(R.string.firestore_field_step_count), steps);
+            data.put(this.getString(R.string.firestore_field_step_length), length);
+            data.put(this.getString(R.string.firestore_field_step_limit), limit);
+
+            FirebaseFirestore.getInstance()
+                    .collection(this.getString(R.string.firestore_collection_user_results))
+                    .document()
+                    .set(data)
+                    .addOnCompleteListener(task -> {
+                        addDayResultToLocalDatabase(steps, time, length, limit, task.isSuccessful());
+                    });
+
+        } else addDayResultToLocalDatabase(steps, time, length, limit, false);
+    }
+
+    private void addDayResultToLocalDatabase(int steps, long time, int length, int limit, boolean synced) {
+        Log.d("myLogs", "result == " + synced);
+        AppDatabase.getDatabase(this).getDayResultDao()
+                .insertResult(new DayResult(time, length, limit, steps, synced));
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+                NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+                if (capabilities != null) {
+                    if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                        return true;
+                    } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                        return true;
+                    } else return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
+                }
+            }
+        return false;
     }
 
     public class LocalBinder extends Binder {

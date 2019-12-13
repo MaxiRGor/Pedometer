@@ -1,10 +1,10 @@
 package ed.doron.pedometer;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import ed.doron.pedometer.data.Preferences;
+import ed.doron.pedometer.models.AppDatabase;
+import ed.doron.pedometer.models.DayResult;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -115,27 +117,16 @@ public class LoginActivity extends AppCompatActivity {
                 .collection(this.getString(R.string.firestore_collection_user_settings))
                 .document(uid)
                 .get().addOnCompleteListener(task -> {
-            Log.d("myLogs", "finding user...");
             if (task.isSuccessful() && task.getResult() != null && task.getResult().get(this.getString(R.string.firestore_field_is_day_mode)) != null) {
                 Log.d("myLogs", "user found");
                 DocumentSnapshot snapshot = task.getResult();
-                /*                        UserSetting userSetting = task.getResult().getDocumentReference().*//*.getDocuments().get(0).toObject(UserSetting.class);*//*
-                        if (userSetting != null) {
-                            Log.d("myLogs","user found");
-                            Log.d("myLogs",userSetting.toString());
-                            initializeSparedPreferences(task.getResult().getDocuments().get(0).getId()
-                                    , userSetting.isDayMode()
-                                    , userSetting.getStepCount()
-                                    , userSetting.getStepLength()
-                                    , userSetting.getStepLimit());
-                        }*/
                 initializeSparedPreferences(uid
                         , (boolean) snapshot.get(this.getString(R.string.firestore_field_is_day_mode))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_count))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_length))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_limit))
                 );
-
+                initializeLocalDatabase(uid);
             } else {
                 Log.d("myLogs", "user not found");
                 initializeSparedPreferences(uid, true, 0, 60, 6000);
@@ -144,14 +135,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-/*    private void initializeFirestoreUserDocument(String uid) {
-        HashMap<String, Object> data = new HashMap<>();
-        data.put(this.getString(R.string.firestore_field_user_uid), uid);
-        DocumentReference documentReference = FirebaseFirestore.getInstance()
-                .collection(this.getString(R.string.firestore_collection_user_settings))
-                .document();
-        documentReference.set(data);
+    private void initializeLocalDatabase(String uid) {
+        FirebaseFirestore.getInstance()
+                .collection(getString(R.string.firestore_collection_user_results))
+                .whereEqualTo(getString(R.string.firestore_field_user_uid), uid)
+                .get().addOnCompleteListener(task -> {
+            if (task.getResult() != null && task.getResult().size() != 0) {
+                for (DocumentSnapshot snapshot : task.getResult()) {
+                    AppDatabase.getDatabase(LoginActivity.this).getDayResultDao().insertResult(snapshot.toObject(DayResult.class));
+                }
+            }
+        });
+    }
 
-        startMainActivity();
-    }*/
 }

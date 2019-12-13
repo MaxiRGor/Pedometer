@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import ed.doron.pedometer.DiagramFragment;
+import ed.doron.pedometer.ui.DiagramFragment;
 import ed.doron.pedometer.ui.ProgressFragment;
 import ed.doron.pedometer.ui.StatisticsFragment;
 

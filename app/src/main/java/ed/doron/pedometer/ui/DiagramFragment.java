@@ -1,4 +1,4 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.ui;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -20,10 +20,10 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ed.doron.pedometer.R;
 import ed.doron.pedometer.data.PedometerViewModel;
 import ed.doron.pedometer.models.DayResult;
 
@@ -74,14 +74,14 @@ public class DiagramFragment extends Fragment implements SwipeRefreshLayout.OnRe
         int size = results.size();
         int i = (size < 8) ? size : 8;
 
-        //int lastDay = Integer.valueOf(dateFormat.format(new Date(results.get(results.size() - 1).getDate())));
+        //int lastDay = Integer.valueOf(dateFormat.format(new Date(results.get(results.size() - 1).getTime())));
 
 
         for (; i > 0; i--) {
             entries.add(new Entry(i, results.get(size - i).getStepCount()));
         }
 /*        for (DayResult result :(ArrayList<DayResult>) pedometerViewModel.getAllResults()) {
-            entries.add(new Entry(Integer.valueOf(dateFormat.format(new Date(result.getDate()))), result.getStepCount()));
+            entries.add(new Entry(Integer.valueOf(dateFormat.format(new Date(result.getTime()))), result.getStepCount()));
         }*/
         return entries;
     }

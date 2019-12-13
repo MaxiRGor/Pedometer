@@ -68,8 +68,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         }
 
         void bind(final DayResult dayResult) {
-            int distance = dayResult.getStepCount() * dayResult.getStepSize() / 100;
-            dateTextView.setText(simpleDateFormat.format(new Date(dayResult.getDate())));
+            int distance = dayResult.getStepCount() * dayResult.getStepLength() / 100;
+            dateTextView.setText(simpleDateFormat.format(new Date(dayResult.getTime())));
             progressView.setMax(dayResult.getStepLimit());
             progressView.setProgress(dayResult.getStepCount());
             progressView.progressAnimate();

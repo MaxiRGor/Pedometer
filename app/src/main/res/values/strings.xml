@@ -27,4 +27,7 @@
     <string name="firestore_field_step_length">stepLength</string>
     <string name="firestore_field_step_limit">stepLimit</string>
 
+    <string name="firestore_collection_user_results">userResults</string>
+    <string name="firestore_field_time">time</string>
+
 </resources>
