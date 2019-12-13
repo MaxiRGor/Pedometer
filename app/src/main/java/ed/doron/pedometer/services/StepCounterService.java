@@ -107,12 +107,12 @@ public class StepCounterService extends Service implements SensorEventListener, 
         long repeatTime = 1000 * 10;   //now == 10 seconds
 
         //in final product replace uncomment
-        //long delay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        long delay = 0;
+        //long initDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        long initDelay = repeatTime;
 
         Timer time = new Timer();
         CalculateDayResultsScheduledTask st = new CalculateDayResultsScheduledTask(stepCount, StepCounterService.this);
-        time.schedule(st, delay, repeatTime);
+        time.schedule(st, initDelay, repeatTime);
     }
 
 
