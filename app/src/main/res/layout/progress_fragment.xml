@@ -20,7 +20,7 @@
         app:cpb_progress_direction="to_right"
         app:cpb_progressbar_color="?attr/progressBarIndicatorColor"
         app:cpb_progressbar_width="40dp"
-        app:cpb_round_border="false"
+        app:cpb_round_border="true"
         app:layout_constraintBottom_toTopOf="@+id/progress_distance_text_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
