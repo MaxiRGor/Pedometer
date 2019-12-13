@@ -1,16 +1,17 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import ed.doron.pedometer.ui.main.ProgressFragment;
+import ed.doron.pedometer.ui.ProgressFragment;
+import ed.doron.pedometer.ui.StatisticsFragment;
 
-public class SectionPagerAdapter extends FragmentPagerAdapter {
+public class FragmentsPagerAdapter extends FragmentPagerAdapter {
 
-    SectionPagerAdapter(FragmentManager fm) {
-        super(fm);
+    public FragmentsPagerAdapter(FragmentManager fragmentManager) {
+        super(fragmentManager, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     @NonNull
@@ -18,11 +19,11 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         switch (position) {
-            case 1:
+            case 0:
                 return ProgressFragment.newInstance();
             //break;
-            case 2:
-                return ProgressFragment.newInstance();
+            case 1:
+                return StatisticsFragment.newInstance();
             //break;
             default:
                 return ProgressFragment.newInstance();

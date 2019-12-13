@@ -1,4 +1,4 @@
-package ed.doron.pedometer.Sensor;
+package ed.doron.pedometer.sensor;
 
 class SensorFusionMath {
 

@@ -1,11 +1,10 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.services;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,11 +17,20 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
+import androidx.room.Room;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 
-import ed.doron.pedometer.Sensor.StepDetector;
+import ed.doron.pedometer.CalculateDayResultsScheduledTask;
+import ed.doron.pedometer.R;
+import ed.doron.pedometer.data.Preferences;
+import ed.doron.pedometer.interfaces.OnNewDayStartedListener;
+import ed.doron.pedometer.interfaces.StepListener;
+import ed.doron.pedometer.models.AppDatabase;
+import ed.doron.pedometer.models.DayResult;
+import ed.doron.pedometer.sensor.StepDetector;
 
 public class StepCounterService extends Service implements SensorEventListener, StepListener, OnNewDayStartedListener {
 
@@ -96,7 +104,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
             dueDate.add(Calendar.HOUR_OF_DAY, 24);
         }
         //in final product replace with 1 day (1000 * 60 * 60 * 24)
-        long repeatTime = 1000 * 30;   //now == 30 seconds
+        long repeatTime = 1000 * 10;   //now == 10 seconds
 
         //in final product replace uncomment
         //long delay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
@@ -106,8 +114,6 @@ public class StepCounterService extends Service implements SensorEventListener, 
         CalculateDayResultsScheduledTask st = new CalculateDayResultsScheduledTask(stepCount, StepCounterService.this);
         time.schedule(st, delay, repeatTime);
     }
-
-
 
 
     @Override
@@ -176,10 +182,17 @@ public class StepCounterService extends Service implements SensorEventListener, 
     public void reset() {
         Log.d("myLogs", "reseted");
         this.stepCount.postValue(0);
+
+        AppDatabase database = Room.databaseBuilder(this, AppDatabase.class, "database").build();
+
+        database.getDayResultDao()
+                .insertResult(new DayResult(new Date().getTime(), Preferences.getStepLength(this), Preferences.getStepLimit(this), this.stepCount.getValue()));
+
+
     }
 
-    class LocalBinder extends Binder {
-        StepCounterService getService() {
+    public class LocalBinder extends Binder {
+        public StepCounterService getService() {
             // Return this instance of StepCounter so clients can call public methods
             return StepCounterService.this;
         }

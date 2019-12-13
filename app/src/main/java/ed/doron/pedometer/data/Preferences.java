@@ -1,4 +1,4 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+
+import ed.doron.pedometer.R;
 
 public class Preferences {
     // Identify Shared Preference Store
@@ -33,12 +35,12 @@ public class Preferences {
     }
 */
 
-    static String getUserDocumentId(Context context) {
+  public   static String getUserDocumentId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         return prefs.getString(USER_DOCUMENT_ID, "");
     }
 
-    static void setUserDocumentId(Context context, String userDocumentId) {
+    public static void setUserDocumentId(Context context, String userDocumentId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString(Preferences.USER_DOCUMENT_ID, userDocumentId);
@@ -49,7 +51,7 @@ public class Preferences {
         return getIntValue(context, STEP_COUNT);
     }
 
-    static void setStepCount(Context context, Integer steps) {
+    public static void setStepCount(Context context, Integer steps) {
         setIntValue(context, STEP_COUNT, steps);
         Log.d("myLogs", "saving steps " + String.valueOf(steps));
     }
@@ -58,7 +60,7 @@ public class Preferences {
         return getIntValue(context, STEP_LENGTH);
     }
 
-    static void setStepLength(Context context, Integer length) {
+    public static void setStepLength(Context context, Integer length) {
         setIntValue(context, STEP_LENGTH, length);
     }
 
@@ -66,7 +68,7 @@ public class Preferences {
         return getIntValue(context, STEP_LIMIT);
     }
 
-    static void setStepLimit(Context context, Integer limit) {
+    public static void setStepLimit(Context context, Integer limit) {
         setIntValue(context, STEP_LIMIT, limit);
     }
 
@@ -74,7 +76,7 @@ public class Preferences {
         return getBooleanValue(context);
     }
 
-    static void setDayMode(Context context, boolean isDayMode) {
+    public  static void setDayMode(Context context, boolean isDayMode) {
         setBooleanValue(context, isDayMode);
     }
 

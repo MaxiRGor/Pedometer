@@ -26,7 +26,10 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.auth.AuthUI;
 
-import ed.doron.pedometer.ui.main.PedometerViewModel;
+import ed.doron.pedometer.adapters.FragmentsPagerAdapter;
+import ed.doron.pedometer.data.PedometerViewModel;
+import ed.doron.pedometer.data.Preferences;
+import ed.doron.pedometer.services.StepCounterService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private PedometerViewModel viewModel;
     StepCounterService stepCounterService;
-
+    private ServiceConnection connection;
+    private ViewPager.OnPageChangeListener onPageChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +50,57 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupViewPager();
+        setupServiceConnection();
+    }
 
-        SectionPagerAdapter sectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager() {
+        FragmentsPagerAdapter sectionsPagerAdapter = new FragmentsPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.container);
         viewPager.setAdapter(sectionsPagerAdapter);
+        setupPageChangeListener();
         viewPager.addOnPageChangeListener(onPageChangeListener);
+    }
+
+    private void setupPageChangeListener() {
+        this.onPageChangeListener = new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                changePageTitle(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        };
+    }
+
+    private void setupServiceConnection() {
+        this.connection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to StepCounterService, cast the IBinder and get StepCounterService instance
+                StepCounterService.LocalBinder binder = (StepCounterService.LocalBinder) service;
+                stepCounterService = binder.getService();
+
+                stepCounterService.stepCount.observe(MainActivity.this, integer -> viewModel.setStepCount(integer));
+
+                Preferences.setStepCount(MainActivity.this, stepCounterService.stepCount.getValue());
+                Preferences.updateUserSettingsOnFirestore(MainActivity.this);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+            }
+        };
     }
 
     private void initializeViewModel() {
@@ -69,23 +119,6 @@ public class MainActivity extends AppCompatActivity {
         }
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
     }
-
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            changePageTitle(position);
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-
-        }
-    };
 
     private void changePageTitle(int position) {
         switch (position) {
@@ -121,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
         final MenuItem stepLengthItem = menu.findItem(R.id.action_step_length);
         final MenuItem stepLimitItem = menu.findItem(R.id.action_step_limit);
 
-        setDayNightSwitch(dayNightItem, (Switch) dayNightItem.getActionView());
-        setStepLengthEditText((EditText) stepLengthItem.getActionView());
+        setupDayNightSwitch(dayNightItem, (Switch) dayNightItem.getActionView());
+        setupStepLengthEditText((EditText) stepLengthItem.getActionView());
         setStepLimitEditText((EditText) stepLimitItem.getActionView());
 
         return super.onPrepareOptionsMenu(menu);
@@ -148,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setDayNightSwitch(MenuItem dayNightItem, Switch dayNightSwitch) {
+    private void setupDayNightSwitch(MenuItem dayNightItem, Switch dayNightSwitch) {
         dayNightSwitch.setChecked(!Preferences.getDayMode(MainActivity.this));
         dayNightSwitch.setText(getString(R.string.night));
         dayNightSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
@@ -159,8 +192,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private void setStepLengthEditText(EditText stepLengthEditText) {
+    private void setupStepLengthEditText(EditText stepLengthEditText) {
         stepLengthEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
         stepLengthEditText.setHint(String.format(getString(R.string.current_step_length), Preferences.getStepLength(MainActivity.this)));
         stepLengthEditText.setOnFocusChangeListener((view, focused) -> {
@@ -253,26 +285,5 @@ public class MainActivity extends AppCompatActivity {
         unbindService(connection);
         Preferences.updateUserSettingsOnFirestore(MainActivity.this);
     }
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to StepCounterService, cast the IBinder and get LocalService instance
-            StepCounterService.LocalBinder binder = (StepCounterService.LocalBinder) service;
-            stepCounterService = binder.getService();
-
-            stepCounterService.stepCount.observe(MainActivity.this, integer -> viewModel.setStepCount(integer));
-
-            Preferences.setStepCount(MainActivity.this, stepCounterService.stepCount.getValue());
-            Preferences.updateUserSettingsOnFirestore(MainActivity.this);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        }
-    };
-
 
 }

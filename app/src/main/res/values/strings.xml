@@ -18,6 +18,7 @@
     <string name="from">from</string>
     <string name="progress_distance_info">With a %d sm step size yours daily distance is %d meters</string>
     <string name="steps">With a %d sm step size yours daily distance is %d meters</string>
+    <string name="day_result_value">%d of %d , %d m</string>
 
     <string name="firestore_collection_user_settings">userSettings</string>
     <string name="firestore_field_user_uid">uid</string>

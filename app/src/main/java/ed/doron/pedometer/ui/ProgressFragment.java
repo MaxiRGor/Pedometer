@@ -1,4 +1,4 @@
-package ed.doron.pedometer.ui.main;
+package ed.doron.pedometer.ui;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
-
+import ed.doron.pedometer.data.PedometerViewModel;
 import ed.doron.pedometer.R;
 
 public class ProgressFragment extends Fragment {

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.ProgressFragment">
+    tools:context=".ui.ProgressFragment">
 
     <com.mikhaellopez.circularprogressbar.CircularProgressBar
         android:id="@+id/circularProgressBar"
@@ -18,8 +18,8 @@
         app:cpb_background_progressbar_color="?attr/progressBarBackgroundColor"
         app:cpb_background_progressbar_width="48dp"
         app:cpb_progress_direction="to_right"
-        app:cpb_progressbar_color="?attr/progressBarColor"
-        app:cpb_progressbar_width="24dp"
+        app:cpb_progressbar_color="?attr/progressBarIndicatorColor"
+        app:cpb_progressbar_width="40dp"
         app:cpb_round_border="false"
         app:layout_constraintBottom_toTopOf="@+id/progress_distance_text_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="TextView"
-        android:textColor="?attr/progressBarColor"
+        android:textColor="?attr/progressBarIndicatorColor"
         android:textSize="64sp"
         app:layout_constraintBottom_toBottomOf="@+id/circularProgressBar"
         app:layout_constraintEnd_toEndOf="@+id/circularProgressBar"
@@ -66,7 +66,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="72dp"
         android:gravity="center"
         android:text="TextView"
         app:autoSizeMaxTextSize="36sp"
@@ -76,6 +76,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/circularProgressBar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

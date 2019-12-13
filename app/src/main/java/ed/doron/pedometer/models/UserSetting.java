@@ -1,4 +1,4 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.models;
 
 public class UserSetting {
 

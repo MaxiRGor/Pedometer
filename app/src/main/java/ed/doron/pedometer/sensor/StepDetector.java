@@ -1,6 +1,6 @@
-package ed.doron.pedometer.Sensor;
+package ed.doron.pedometer.sensor;
 
-import ed.doron.pedometer.StepListener;
+import ed.doron.pedometer.interfaces.StepListener;
 
 public class StepDetector {
     private static final int ACCELEROMETER_RING_SIZE = 50;

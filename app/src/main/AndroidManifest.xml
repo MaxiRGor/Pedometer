@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Day">
         <service
-            android:name=".StepCounterService"
+            android:name=".services.StepCounterService"
             android:enabled="true"
             android:exported="true"></service>
 
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.main.PedometerViewModel" />
+        <receiver android:name=".data.PedometerViewModel" />
     </application>
 
 </manifest>

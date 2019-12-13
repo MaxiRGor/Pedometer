@@ -1,4 +1,4 @@
-package ed.doron.pedometer;
+package ed.doron.pedometer.interfaces;
 
 public interface StepListener {
     void step(long count);

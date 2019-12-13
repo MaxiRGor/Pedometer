@@ -8,20 +8,24 @@
     </style>
 
     <style name="AppTheme.Day">
-        <item name="colorPrimary">@color/colorPrimaryDay</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkDay</item>
-        <item name="colorAccent">@color/colorAccentDay</item>
-        <item name="progressBarBackgroundColor">@color/progressBarBackgroundColorDay</item>
-        <item name="progressBarColor">@color/progressBarColorDay</item>
-        <item name="colorOnBackground">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/primaryLightColor</item>
+        <item name="progressBarBackgroundColor">@color/primaryLightColor</item>
+        <item name="progressBarIndicatorColor">@color/primaryDarkColor</item>
+        <item name="customBackground">@color/primaryBackgroundColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
     </style>
 
     <style name="AppTheme.Night">
-        <item name="colorPrimary">@color/colorPrimaryNight</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
-        <item name="colorAccent">@color/colorAccentNight</item>
-        <item name="progressBarBackgroundColor">@color/progressBarBackgroundColorNight</item>
-        <item name="progressBarColor">@color/progressBarColorNight</item>
+        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="colorPrimaryDark">@color/secondaryDarkColor</item>
+        <item name="colorAccent">@color/secondaryLightColor</item>
+        <item name="progressBarBackgroundColor">@color/secondaryLightColor</item>
+        <item name="progressBarIndicatorColor">@color/secondaryDarkColor</item>
+        <item name="customBackground">@color/secondaryBackgroundColor</item>
+        <item name="colorOnBackground">@color/secondaryBackgroundColor</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
 
 </resources>

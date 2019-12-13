@@ -1,18 +1,30 @@
-package ed.doron.pedometer.ui.main;
+package ed.doron.pedometer.data;
 
 
-import android.util.Log;
+import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-public class PedometerViewModel extends ViewModel {
-    // TODO: Implement the ViewModel
+import java.util.List;
 
+import ed.doron.pedometer.models.AppDatabase;
+import ed.doron.pedometer.models.DayResult;
+
+public class PedometerViewModel extends AndroidViewModel {
+
+    private AppDatabase appDatabase;
     private MutableLiveData<Integer> stepCount;
     private MutableLiveData<Integer> stepLimit;
     private MutableLiveData<Integer> stepLength;
+
+    public PedometerViewModel(@NonNull Application application) {
+        super(application);
+        appDatabase = AppDatabase.getDatabase(application);
+    }
+
 
     public LiveData<Integer> getStepCount() {
         if (stepCount == null)
@@ -54,5 +66,9 @@ public class PedometerViewModel extends ViewModel {
             this.stepLength.setValue(stepLength);
     }
 
+
+    public List<DayResult> getAllResults() {
+        return appDatabase.getDayResultDao().getAllResults();
+    }
 
 }
