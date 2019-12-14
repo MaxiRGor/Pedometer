@@ -100,20 +100,18 @@ public class StepCounterService extends Service implements SensorEventListener, 
         Calendar currentDate = Calendar.getInstance();
         Calendar dueDate = Calendar.getInstance();
 
-        // Set Execution to 00:00:00 AM
-        dueDate.set(Calendar.HOUR_OF_DAY, 0);
-        dueDate.set(Calendar.MINUTE, 0);
-        dueDate.set(Calendar.SECOND, 0);
+        // Set Execution time
+        dueDate.set(Calendar.HOUR_OF_DAY, 23);
+        dueDate.set(Calendar.MINUTE, 59);
+        dueDate.set(Calendar.SECOND, 30);
 
         if (dueDate.before(currentDate)) {
             dueDate.add(Calendar.HOUR_OF_DAY, 24);
         }
 
-        //TODO long repeatTime = 1000 * 60 * 60 * 24; /* 1 DAY */
-        long repeatTime = 1000 * 15 * 60;
+        long repeatTime = 1000 * 60 * 60 * 24;
 
-        //TODO long initialDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        long initialDelay = repeatTime - 1;
+        long initialDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
 
         Timer time = new Timer();
         ResetCounterScheduledTask resetCounterScheduledTask = new ResetCounterScheduledTask(StepCounterService.this);

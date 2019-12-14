@@ -26,8 +26,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     private SimpleDateFormat simpleDateFormat;
 
     public StatisticsRecyclerViewAdapter(Context context, ArrayList<DayResult> dayResults) {
-        //TODO String pattern = "dd.MM.yyyy";
-        String pattern = "hh.mm dd/MM";
+        String pattern = "dd.MM.yyyy";
+        //String pattern = "hh.mm dd/MM";
         this.simpleDateFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
         this.dayResults = dayResults;
         this.context = context;

@@ -67,7 +67,7 @@ public class DiagramFragment extends Fragment implements SwipeRefreshLayout.OnRe
         Cartesian cartesian = AnyChart.line();
         cartesian.animation(true);
         cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-        cartesian.title(this.getString(R.string.last_30_values_statistics));
+        cartesian.title(this.getString(R.string.last_30_days_statistics));
         cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
 
         List<DataEntry> seriesData = getDataEntry();
@@ -102,8 +102,8 @@ public class DiagramFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private ArrayList<DataEntry> getDataEntry() {
-        //TODO String pattern = "dd.MM";
-        String pattern = "hh.mm";
+        String pattern = "dd.MM";
+        // String pattern = "hh.mm";
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
         ArrayList<DataEntry> seriesData = new ArrayList<>();
         ArrayList<DayResult> results = (ArrayList<DayResult>) pedometerViewModel.getAllResults();
