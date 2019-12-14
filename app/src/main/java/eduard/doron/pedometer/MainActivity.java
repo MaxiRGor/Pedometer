@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -123,7 +124,12 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
                 FirebaseFirestore.getInstance()
                         .collection(this.getString(R.string.firestore_collection_user_results))
                         .document()
-                        .set(data);
+                        .set(data).addOnSuccessListener(aVoid -> AppDatabase.getDatabase(MainActivity.this).getDayResultDao()
+                                .syncResult(new DayResult(result.getTime()
+                                        , result.getStepLength()
+                                        , result.getStepLimit()
+                                        , result.getStepCount()
+                                        , true)));
             }
         }
     }

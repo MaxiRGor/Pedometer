@@ -14,7 +14,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import eduard.doron.pedometer.data.Preferences;
 import eduard.doron.pedometer.models.AppDatabase;
@@ -94,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void initializeSparedPreferences(String uid, boolean isDayMode, long stepCount, long stepLength, long stepLimit) {
+    private void syncSparedPreferences(String uid, boolean isDayMode, long stepCount, long stepLength, long stepLimit) {
         Preferences.setUserDocumentId(LoginActivity.this, uid);
         Preferences.setDayMode(LoginActivity.this, isDayMode);
         Preferences.setStepCount(LoginActivity.this, (int) stepCount);
@@ -111,21 +113,22 @@ public class LoginActivity extends AppCompatActivity {
                 .get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().get(this.getString(R.string.firestore_field_is_day_mode)) != null) {
                 DocumentSnapshot snapshot = task.getResult();
-                initializeSparedPreferences(uid
+                syncSparedPreferences(uid
                         , (boolean) snapshot.get(this.getString(R.string.firestore_field_is_day_mode))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_count))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_length))
                         , (long) snapshot.get(this.getString(R.string.firestore_field_step_limit))
                 );
-                initializeLocalDatabase(uid);
+                syncLocalDatabase(uid);
             } else {
-                initializeSparedPreferences(uid, true, 0, 60, 6000);
+                syncSparedPreferences(uid, true, 0, 60, 6000);
+                generateRandomStatistics();
             }
 
         });
     }
 
-    private void initializeLocalDatabase(String uid) {
+    private void syncLocalDatabase(String uid) {
         FirebaseFirestore.getInstance()
                 .collection(getString(R.string.firestore_collection_user_results))
                 .whereEqualTo(getString(R.string.firestore_field_user_uid), uid)
@@ -136,6 +139,22 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void generateRandomStatistics() {
+        long time = new Date().getTime();
+        int oneDayInMs = 1000 * 60 * 60 * 24;
+        int generatingDayCount = 30;
+        for (; generatingDayCount > -0; generatingDayCount--) {
+            DayResult result = new DayResult(time - (oneDayInMs * generatingDayCount)
+                    , 60
+                    , (new Random().nextInt(5) + 5) * 1000
+                    , new Random().nextInt(6000) + 1000
+                    , false);
+            AppDatabase.getDatabase(this).getDayResultDao()
+                    .insertResult(result);
+        }
+
     }
 
 }
