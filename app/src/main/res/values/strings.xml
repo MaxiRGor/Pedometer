@@ -16,7 +16,7 @@
     <string name="step_count">Step count</string>
     <string name="current_steps">Today you\'ve gone %d steps</string>
     <string name="from">from</string>
-    <string name="steps_value">steps</string>
+    <string name="steps_value">Steps</string>
     <string name="progress_distance_info">With a %d sm step size yours daily distance is %d meters</string>
     <string name="steps">With a %d sm step size yours daily distance is %d meters</string>
     <string name="day_result_value">%d of %d , %d m</string>

@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "112800807594",
-    "firebase_url": "https://eddiespedometer.firebaseio.com",
-    "project_id": "eddiespedometer",
-    "storage_bucket": "eddiespedometer.appspot.com"
+    "project_number": "255743640412",
+    "firebase_url": "https://pedometer-d5b7a.firebaseio.com",
+    "project_id": "pedometer-d5b7a",
+    "storage_bucket": "pedometer-d5b7a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:112800807594:android:20f11b0c9b9aa24db4eed3",
+        "mobilesdk_app_id": "1:255743640412:android:54c16bc691ee986ee17799",
         "android_client_info": {
-          "package_name": "ed.doron.pedometer"
+          "package_name": "eduard.doron.pedometer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "112800807594-bu2pnfqa8l2p422op8rv6314tg0bqqgm.apps.googleusercontent.com",
+          "client_id": "255743640412-ei0as5ksfrniiltc83cqr63kpma8foo4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "ed.doron.pedometer",
+            "package_name": "eduard.doron.pedometer",
             "certificate_hash": "c8e62f2bd3b70100eb73c5f522393262093ec5f5"
           }
         },
         {
-          "client_id": "112800807594-iq77mcalt3afoisdf19505tb9icj585j.apps.googleusercontent.com",
+          "client_id": "255743640412-06ebvpqvhe8cakp5chkbv9t3ltufpuq5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBttAOKByCAIUiDGfUufUsKzuGVsd7Ljc8"
+          "current_key": "AIzaSyCQrxh3VpSzYZ0MVgEbsJMnJpSyuNo0d00"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "112800807594-iq77mcalt3afoisdf19505tb9icj585j.apps.googleusercontent.com",
+              "client_id": "255743640412-06ebvpqvhe8cakp5chkbv9t3ltufpuq5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
