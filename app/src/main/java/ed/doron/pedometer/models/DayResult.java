@@ -1,6 +1,7 @@
 package ed.doron.pedometer.models;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 //@SuppressWarnings("unused")
@@ -23,6 +24,7 @@ public class DayResult {
         this.synced = synced;
     }
 
+    @Ignore
     public DayResult() {
     }
 

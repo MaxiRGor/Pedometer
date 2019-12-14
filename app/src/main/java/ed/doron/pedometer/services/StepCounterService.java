@@ -11,21 +11,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -83,7 +78,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
 
 
         builder = new NotificationCompat.Builder(StepCounterService.this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_step)
                 .setContentTitle(getString(R.string.step_count))
                 .setContentText(String.format(getString(R.string.current_steps), this.stepCount.getValue()))
                 .setOnlyAlertOnce(true)
@@ -100,7 +95,6 @@ public class StepCounterService extends Service implements SensorEventListener, 
         setScheduledTask();
 
     }
-
 
     private void setScheduledTask() {
         Calendar currentDate = Calendar.getInstance();
@@ -214,9 +208,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
                     .collection(this.getString(R.string.firestore_collection_user_results))
                     .document()
                     .set(data)
-                    .addOnCompleteListener(task -> {
-                        addDayResultToLocalDatabase(steps, time, length, limit, task.isSuccessful());
-                    });
+                    .addOnCompleteListener(task -> addDayResultToLocalDatabase(steps, time, length, limit, task.isSuccessful()));
 
         } else addDayResultToLocalDatabase(steps, time, length, limit, false);
     }
@@ -231,15 +223,15 @@ public class StepCounterService extends Service implements SensorEventListener, 
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
-                NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-                if (capabilities != null) {
-                    if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        return true;
-                    } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        return true;
-                    } else return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
-                }
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    return true;
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    return true;
+                } else return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
             }
+        }
         return false;
     }
 

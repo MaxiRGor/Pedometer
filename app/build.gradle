@@ -52,10 +52,11 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     //lib for styles
     implementation 'com.google.android.material:material:1.2.0-alpha02'
-    //triple custom progress
+    //custom progresses
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
     implementation "com.github.skydoves:progressview:1.0.5"
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    /*implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'*/
+    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 
     //abstraction layer over SQLite
     implementation "androidx.room:room-runtime:$room_version"

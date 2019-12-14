@@ -11,17 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/diagram_line_chart"
+        <com.anychart.AnyChartView
+            android:id="@+id/diagram_any_chart_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="164dp"
-            android:layout_marginBottom="256dp"
+            android:layout_marginBottom="56dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        </com.github.mikephil.charting.charts.LineChart>
+        </com.anychart.AnyChartView>
+
+        <ProgressBar
+            android:id="@+id/diagram_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
