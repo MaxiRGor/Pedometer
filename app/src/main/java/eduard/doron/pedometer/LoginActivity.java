@@ -143,9 +143,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void generateRandomStatistics() {
         long time = new Date().getTime();
-        int oneDayInMs = 1000 * 60 * 60 * 24;
+        long oneDayInMs = 1000 * 60 * 60 * 24;
         int generatingDayCount = 31;
-        for (; generatingDayCount > 1; generatingDayCount--) {
+        for (; generatingDayCount > 0; generatingDayCount--) {
             DayResult result = new DayResult(time - (oneDayInMs * generatingDayCount)
                     , 60
                     , (new Random().nextInt(5) + 5) * 1000
