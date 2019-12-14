@@ -25,7 +25,6 @@ import eduard.doron.pedometer.models.DayResult;
 
 public class StatisticsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private View view;
     private PedometerViewModel pedometerViewModel;
     private SwipeRefreshLayout swipeRefreshLayout;
     private StatisticsRecyclerViewAdapter adapter;
@@ -37,7 +36,7 @@ public class StatisticsFragment extends Fragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.statistics_fragment, container, false);
+        View view = inflater.inflate(R.layout.statistics_fragment, container, false);
         pedometerViewModel = ViewModelProviders.of(this).get(PedometerViewModel.class);
         setupSwipeRefreshListener(view);
         setupRecyclerView(view);
