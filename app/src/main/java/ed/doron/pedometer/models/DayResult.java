@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 @Entity
 public class DayResult {
 

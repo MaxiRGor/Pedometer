@@ -2,7 +2,6 @@ package ed.doron.pedometer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,8 +22,7 @@ import ed.doron.pedometer.models.DayResult;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 123;
-    private static final String TAG = "myLogs";
+    private static final int RC_SIGN_IN = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +75,10 @@ public class LoginActivity extends AppCompatActivity {
             if (response != null) {
                 if (resultCode == RESULT_OK) {
                     // Successfully signed in
-                    Log.d(TAG, response.toString());
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
                         checkIfUserDocumentExistsOnFirestore(user.getUid());
-                        // initializeSparedPreferences(user.getUid());
-                        // initializeFirestoreUserDocument(user.getUid());
-                        //startMainActivity();
                     }
-
                     // ...
                 } else {
                     // Sign in failed. If response is null the user canceled the
@@ -93,9 +86,8 @@ public class LoginActivity extends AppCompatActivity {
                     // response.getError().getErrorCode() and handle the error.
                     // ...
                     if (response.getError() != null && response.getError().getLocalizedMessage() != null)
-                        Log.d(TAG, response.getError().getLocalizedMessage());
-                    //I made a loop
-                    createSignInIntent();
+                        // I made a loop
+                        createSignInIntent();
                 }
             }
         }
@@ -118,7 +110,6 @@ public class LoginActivity extends AppCompatActivity {
                 .document(uid)
                 .get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().get(this.getString(R.string.firestore_field_is_day_mode)) != null) {
-                Log.d("myLogs", "user found");
                 DocumentSnapshot snapshot = task.getResult();
                 initializeSparedPreferences(uid
                         , (boolean) snapshot.get(this.getString(R.string.firestore_field_is_day_mode))
@@ -128,7 +119,6 @@ public class LoginActivity extends AppCompatActivity {
                 );
                 initializeLocalDatabase(uid);
             } else {
-                Log.d("myLogs", "user not found");
                 initializeSparedPreferences(uid, true, 0, 60, 6000);
             }
 

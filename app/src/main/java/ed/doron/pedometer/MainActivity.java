@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +39,6 @@ import ed.doron.pedometer.services.StepCounterService;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String TAG = "tag";
     private Menu menu;
     private Toolbar toolbar;
     private PedometerViewModel viewModel;
@@ -232,12 +230,10 @@ public class MainActivity extends AppCompatActivity {
             //works both for DONE and RETURN
             if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                 if (!stepLengthEditText.getText().toString().isEmpty()) {
-                    Log.d(TAG, "changing step length");
                     try {
                         viewModel.setStepLength(Integer.parseInt(stepLengthEditText.getText().toString()));
                         Preferences.setStepLength(MainActivity.this, Integer.parseInt(stepLengthEditText.getText().toString()));
-                    } catch (Exception e) {
-                        Log.d(TAG, "incorrect step length integer value");
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -260,12 +256,10 @@ public class MainActivity extends AppCompatActivity {
         stepLimitEditText.setOnEditorActionListener((textView, actionId, keyEvent) -> {
             if ((keyEvent != null && (keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                 if (!stepLimitEditText.getText().toString().isEmpty()) {
-                    Log.d(TAG, "changing step limit");
                     try {
                         viewModel.setStepLimit(Integer.parseInt(stepLimitEditText.getText().toString()));
                         Preferences.setStepLimit(MainActivity.this, Integer.parseInt(stepLimitEditText.getText().toString()));
-                    } catch (Exception e) {
-                        Log.d(TAG, "incorrect step limit integer value");
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -296,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (manager != null) {
             for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                Log.d(TAG, service.getClass().getName());
                 if (StepCounterService.class.getName().equals(service.service.getClassName())) {
                     return true;
                 }

@@ -15,7 +15,6 @@ import android.net.NetworkCapabilities;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,18 +28,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 
-import ed.doron.pedometer.CalculateDayResultsScheduledTask;
 import ed.doron.pedometer.R;
+import ed.doron.pedometer.ResetCounterScheduledTask;
 import ed.doron.pedometer.data.Preferences;
-import ed.doron.pedometer.interfaces.OnNewDayStartedListener;
+import ed.doron.pedometer.interfaces.OnResetCounterListenerListener;
 import ed.doron.pedometer.interfaces.StepListener;
 import ed.doron.pedometer.models.AppDatabase;
 import ed.doron.pedometer.models.DayResult;
 import ed.doron.pedometer.sensor.StepDetector;
 
-public class StepCounterService extends Service implements SensorEventListener, StepListener, OnNewDayStartedListener {
+public class StepCounterService extends Service implements SensorEventListener, StepListener, OnResetCounterListenerListener {
 
-    // Notifications
     private static final int NOTIFY_ID = 42;
     private static String CHANNEL_ID = "Pedometer step channel";
 
@@ -48,34 +46,27 @@ public class StepCounterService extends Service implements SensorEventListener, 
     private NotificationManagerCompat notificationManager;
 
     private StepDetector stepDetector;
-    private static final String TEXT_NUM_STEPS = "Number of Steps: ";
+
     public MutableLiveData<Integer> stepCount;
 
     private IBinder binder;
 
-    // private PeriodicWorkRequest updater;
-
 
     @Override
     public void onCreate() {
-        Log.d("myLogs", "service started");
         super.onCreate();
 
+        this.stepCount = new MutableLiveData<>(Preferences.getStepCount(StepCounterService.this));
+        binder = new LocalBinder();
+        setupNotification();
+        setupStepDetector();
+        setupScheduledTask();
+    }
+
+    private void setupNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel();
         }
-        binder = new LocalBinder();
-        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor accelerometer;
-        if (sensorManager != null) {
-            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
-        }
-        this.stepDetector = new StepDetector();
-        this.stepDetector.registerListener(this);
-
-        this.stepCount = new MutableLiveData<>(Preferences.getStepCount(StepCounterService.this));
-
 
         builder = new NotificationCompat.Builder(StepCounterService.this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_step)
@@ -90,13 +81,22 @@ public class StepCounterService extends Service implements SensorEventListener, 
         notificationManager = NotificationManagerCompat.from(StepCounterService.this);
         notificationManager.notify(NOTIFY_ID, notification);
 
+        // needed to sdk26+, without notification service would stop
         startForeground(NOTIFY_ID, notification);
-
-        setScheduledTask();
-
     }
 
-    private void setScheduledTask() {
+    private void setupStepDetector() {
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor accelerometer;
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+        this.stepDetector = new StepDetector();
+        this.stepDetector.registerListener(this);
+    }
+
+    private void setupScheduledTask() {
         Calendar currentDate = Calendar.getInstance();
         Calendar dueDate = Calendar.getInstance();
 
@@ -108,16 +108,16 @@ public class StepCounterService extends Service implements SensorEventListener, 
         if (dueDate.before(currentDate)) {
             dueDate.add(Calendar.HOUR_OF_DAY, 24);
         }
-        //in final product replace with 1 day (1000 * 60 * 60 * 24)
-        long repeatTime = 1000 * 10;   //now == 10 seconds
 
-        //in final product replace uncomment
-        //long initDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-        long initDelay = repeatTime - 1;
+        //TODO long repeatTime = 1000 * 60 * 60 * 24; /* 1 DAY */
+        long repeatTime = 1000 * 60 * 15;
+
+        //TODO long initialDelay = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
+        long initialDelay = repeatTime - 1;
 
         Timer time = new Timer();
-        CalculateDayResultsScheduledTask st = new CalculateDayResultsScheduledTask(stepCount, StepCounterService.this);
-        time.schedule(st, initDelay, repeatTime);
+        ResetCounterScheduledTask resetCounterScheduledTask = new ResetCounterScheduledTask(StepCounterService.this);
+        time.schedule(resetCounterScheduledTask, initialDelay, repeatTime);
     }
 
 
@@ -145,23 +145,19 @@ public class StepCounterService extends Service implements SensorEventListener, 
     }
 
     @Override
-    public void step(long count) {
+    public void step() {
         stepCount.setValue(stepCount.getValue() + 1);
-        Log.d("tag", TEXT_NUM_STEPS + this.stepCount);
         updateNotification();
-
     }
 
     @Override
     public void onDestroy() {
-        Log.d("tag", "onDestroy");
         Preferences.setStepCount(StepCounterService.this, this.stepCount.getValue());
         super.onDestroy();
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.d("tag", "onTaskRemoved");
         Preferences.setStepCount(StepCounterService.this, this.stepCount.getValue());
         super.onTaskRemoved(rootIntent);
     }
@@ -184,8 +180,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
     }
 
     @Override
-    public void startNewDay() {
-        Log.d("myLogs", "new day started )))");
+    public void reset() {
         int currentStepValue = stepCount.getValue();
         this.stepCount.postValue(0);
         addDayResultToFirestore(currentStepValue);
@@ -214,7 +209,6 @@ public class StepCounterService extends Service implements SensorEventListener, 
     }
 
     private void addDayResultToLocalDatabase(int steps, long time, int length, int limit, boolean synced) {
-        Log.d("myLogs", "result == " + synced);
         AppDatabase.getDatabase(this).getDayResultDao()
                 .insertResult(new DayResult(time, length, limit, steps, synced));
     }
@@ -242,35 +236,3 @@ public class StepCounterService extends Service implements SensorEventListener, 
         }
     }
 }
-
-
-/*        Data data = new Data.Builder().putInt("count", this.stepCount.getValue()).build();
-        stepCount.observeForever(new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                data = new Data.Builder().putInt("count",integer).build();
-            }
-        });*//*
-
-
-        //This will take care of the first execution
-        Calendar currentDate = Calendar.getInstance();
-        Calendar dueDate = Calendar.getInstance();
-        // Set Execution around 05:00:00 AM
-        dueDate.set(Calendar.HOUR_OF_DAY, 13);
-        dueDate.set(Calendar.MINUTE, 0);
-        dueDate.set(Calendar.SECOND, 0);
-
-        if (dueDate.before(currentDate)) {
-            dueDate.add(Calendar.HOUR_OF_DAY, 24);
-        }
-
-        long timeDiff = dueDate.getTimeInMillis() - currentDate.getTimeInMillis();
-
-
-        if (stepCount.getValue() != null) {
-            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(DatabaseInfoUpdater.class)
-                    .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-                    .setInputData(new Data.Builder().putInt(getString(R.string.steps), stepCount.getValue()).build()).build();
-            WorkManager.getInstance().enqueue(oneTimeWorkRequest);
-        } else Log.d("myLogs", "value = null");*/

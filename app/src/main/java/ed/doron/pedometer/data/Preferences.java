@@ -2,7 +2,6 @@ package ed.doron.pedometer.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -14,28 +13,15 @@ import ed.doron.pedometer.R;
 
 public class Preferences {
     // Identify Shared Preference Store
-    final static String PREFS_NAME = "pedometerPreferences";
+    private final static String PREFS_NAME = "pedometerPreferences";
 
-    //private final static String IS_SERVICE_RUNNING = "isServiceRunning";
     private final static String USER_DOCUMENT_ID = "userDocumentId";
     private final static String STEP_COUNT = "stepCount";
     private final static String STEP_LENGTH = "stepLength";
     private final static String STEP_LIMIT = "stepLimit";
     private final static String IS_DAY_MODE = "isDayMode";
 
-/*
-    // Should the Step Counting Service be running?
-    public static boolean getServiceRun(Context context) {
-        return getBooleanValue(context, IS_SERVICE_RUNNING);
-    }
-
-    // Should the Step Counting Service be running?
-    public static void setServiceRun(Context context, boolean running) {
-        setBooleanValue(context, IS_SERVICE_RUNNING, running);
-    }
-*/
-
-  public   static String getUserDocumentId(Context context) {
+    private static String getUserDocumentId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         return prefs.getString(USER_DOCUMENT_ID, "");
     }
@@ -53,7 +39,6 @@ public class Preferences {
 
     public static void setStepCount(Context context, Integer steps) {
         setIntValue(context, STEP_COUNT, steps);
-        Log.d("myLogs", "saving steps " + String.valueOf(steps));
     }
 
     public static int getStepLength(Context context) {
@@ -76,7 +61,7 @@ public class Preferences {
         return getBooleanValue(context);
     }
 
-    public  static void setDayMode(Context context, boolean isDayMode) {
+    public static void setDayMode(Context context, boolean isDayMode) {
         setBooleanValue(context, isDayMode);
     }
 
@@ -105,20 +90,6 @@ public class Preferences {
     }
 
     public static void updateUserSettingsOnFirestore(Context context) {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            HashMap<String, Object> data = new HashMap<>();
-            data.put(context.getString(R.string.firestore_field_is_day_mode), getDayMode(context));
-            data.put(context.getString(R.string.firestore_field_step_count), getStepCount(context));
-            data.put(context.getString(R.string.firestore_field_step_length), getStepLength(context));
-            data.put(context.getString(R.string.firestore_field_step_limit), getStepLimit(context));
-            DocumentReference documentReference = FirebaseFirestore.getInstance()
-                    .collection(context.getString(R.string.firestore_collection_user_settings))
-                    .document(getUserDocumentId(context));
-            documentReference.set(data);
-        }
-    }
-
-    public static void calculateDailyProgress(Context context) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             HashMap<String, Object> data = new HashMap<>();
             data.put(context.getString(R.string.firestore_field_is_day_mode), getDayMode(context));

@@ -56,7 +56,7 @@ public class StepDetector {
 
         if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD
                 && (timeNs - lastStepTimeNs > STEP_DELAY_NS)) {
-            listener.step(timeNs);
+            listener.step();
             lastStepTimeNs = timeNs;
         }
         oldVelocityEstimate = velocityEstimate;

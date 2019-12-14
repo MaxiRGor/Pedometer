@@ -28,7 +28,7 @@ public class PedometerViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getStepCount() {
         if (stepCount == null)
-            stepCount = new MutableLiveData<>(1);
+            stepCount = new MutableLiveData<>(0);
         return stepCount;
     }
 
@@ -42,7 +42,7 @@ public class PedometerViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getStepLimit() {
         if (stepLimit == null)
-            stepLimit = new MutableLiveData<>(10);
+            stepLimit = new MutableLiveData<>(0);
         return stepLimit;
     }
 
@@ -55,7 +55,7 @@ public class PedometerViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getStepLength() {
         if (stepLength == null)
-            stepLength = new MutableLiveData<>(10);
+            stepLength = new MutableLiveData<>(0);
         return stepLength;
     }
 

@@ -9,7 +9,6 @@ import java.util.List;
 
 import ed.doron.pedometer.models.DayResult;
 
-
 @Dao
 public interface DayResultDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
