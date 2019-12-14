@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -33,11 +34,12 @@ import java.util.HashMap;
 import eduard.doron.pedometer.adapters.FragmentsPagerAdapter;
 import eduard.doron.pedometer.data.PedometerViewModel;
 import eduard.doron.pedometer.data.Preferences;
+import eduard.doron.pedometer.interfaces.OnEmptyDataListener;
 import eduard.doron.pedometer.models.AppDatabase;
 import eduard.doron.pedometer.models.DayResult;
 import eduard.doron.pedometer.services.StepCounterService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnEmptyDataListener {
 
     private Menu menu;
     private Toolbar toolbar;
@@ -305,4 +307,11 @@ public class MainActivity extends AppCompatActivity {
         Preferences.updateUserSettingsOnFirestore(MainActivity.this);
     }
 
+    @Override
+    public void showSnackBar() {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.container), this.getString(R.string.no_data_found), Snackbar.LENGTH_LONG);
+        snackbar.setAction(this.getString(R.string.dismiss), view -> snackbar.dismiss());
+        snackbar.setDuration(15000);
+        snackbar.show();
+    }
 }

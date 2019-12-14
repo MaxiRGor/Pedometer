@@ -22,6 +22,7 @@ import com.anychart.data.Set;
 import com.anychart.enums.Anchor;
 import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,8 +30,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import eduard.doron.pedometer.MainActivity;
 import eduard.doron.pedometer.R;
 import eduard.doron.pedometer.data.PedometerViewModel;
+import eduard.doron.pedometer.interfaces.OnEmptyDataListener;
 import eduard.doron.pedometer.models.DayResult;
 
 public class DiagramFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -106,11 +109,18 @@ public class DiagramFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ArrayList<DataEntry> seriesData = new ArrayList<>();
         ArrayList<DayResult> results = (ArrayList<DayResult>) pedometerViewModel.getAllResults();
         int size = results.size();
+        if (size == 0) {
+            OnEmptyDataListener listener = (MainActivity) this.getContext();
+            if (listener != null) {
+                listener.showSnackBar();
+            }
+        }
         int i = (size < 30) ? size : 30;
         for (; i > 0; i--) {
             seriesData.add(new ValueDataEntry(dateFormat.format(new Date(results.get(size - i).getTime())), results.get(size - i).getStepCount()));
         }
         return seriesData;
     }
+
 
 }

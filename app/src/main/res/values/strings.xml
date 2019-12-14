@@ -32,5 +32,7 @@
     <string name="firestore_field_time">time</string>
     <string name="last_30_values_statistics">Last 30 values</string>
     <string name="number_of_steps">Number of steps</string>
+    <string name="no_data_found">No data found! Try to refresh a screen in a few minutes.</string>
+    <string name="dismiss">Dismiss</string>
 
 </resources>
