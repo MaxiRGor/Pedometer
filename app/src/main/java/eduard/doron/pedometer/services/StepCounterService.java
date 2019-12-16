@@ -75,9 +75,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        Notification notification;
-
-        notification = builder.build();
+        Notification notification = builder.build();
         notificationManager = NotificationManagerCompat.from(StepCounterService.this);
         notificationManager.notify(NOTIFY_ID, notification);
 
@@ -185,7 +183,7 @@ public class StepCounterService extends Service implements SensorEventListener, 
     }
 
     private void addDayResultToFirestore(int steps) {
-        long time = new Date().getTime();
+        long time = System.currentTimeMillis();
         int length = Preferences.getStepLength(this);
         int limit = Preferences.getStepLimit(this);
 

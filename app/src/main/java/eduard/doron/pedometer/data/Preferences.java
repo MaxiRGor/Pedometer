@@ -62,7 +62,7 @@ public class Preferences {
     }
 
     public static void setDayMode(Context context, boolean isDayMode) {
-        setBooleanValue(context, isDayMode);
+        setBooleanValue(context, Preferences.IS_DAY_MODE, isDayMode);
     }
 
     private static boolean getBooleanValue(Context context) {
@@ -70,10 +70,10 @@ public class Preferences {
         return prefs.getBoolean(Preferences.IS_DAY_MODE, true);
     }
 
-    private static void setBooleanValue(Context context, Boolean value) {
+    private static void setBooleanValue(Context context, String key, Boolean value) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putBoolean(Preferences.IS_DAY_MODE, value);
+        prefsEditor.putBoolean(key, value);
         prefsEditor.apply();
     }
 

@@ -169,13 +169,13 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         this.menu = menu;
-        final MenuItem dayNightItem = menu.findItem(R.id.action_day_night);
-        final MenuItem stepLengthItem = menu.findItem(R.id.action_step_length);
-        final MenuItem stepLimitItem = menu.findItem(R.id.action_step_limit);
+        MenuItem dayNightItem = menu.findItem(R.id.action_day_night);
+        MenuItem stepLengthItem = menu.findItem(R.id.action_step_length);
+        MenuItem stepLimitItem = menu.findItem(R.id.action_step_limit);
 
         setupDayNightSwitch(dayNightItem, (Switch) dayNightItem.getActionView());
         setupStepLengthEditText((EditText) stepLengthItem.getActionView());
-        setStepLimitEditText((EditText) stepLimitItem.getActionView());
+        setupStepLimitEditText((EditText) stepLimitItem.getActionView());
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
 
     }
 
-    private void setStepLimitEditText(EditText stepLimitEditText) {
+    private void setupStepLimitEditText(EditText stepLimitEditText) {
         stepLimitEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
         stepLimitEditText.setHint(String.format(getString(R.string.current_step_limit), Preferences.getStepLimit(MainActivity.this)));
         stepLimitEditText.setOnFocusChangeListener((view, focused) -> {
