@@ -16,15 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
-
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,6 +24,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 import eduard.doron.pedometer.adapters.FragmentsPagerAdapter;
 import eduard.doron.pedometer.data.PedometerViewModel;
 import eduard.doron.pedometer.data.Preferences;
@@ -45,17 +43,17 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
     private Menu menu;
     private Toolbar toolbar;
     private PedometerViewModel viewModel;
-    StepCounterService stepCounterService;
+    private StepCounterService stepCounterService;
     private ServiceConnection connection;
     private ViewPager.OnPageChangeListener onPageChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_activity);
         this.viewModel = ViewModelProviders.of(this).get(PedometerViewModel.class);
         initializeViewModel();
         setCustomTheme(Preferences.getDayMode(MainActivity.this));
-        setContentView(R.layout.main_activity);
         this.toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupViewPager();
@@ -71,20 +69,10 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
     }
 
     private void setupPageChangeListener() {
-        this.onPageChangeListener = new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
+        this.onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 changePageTitle(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
             }
         };
     }
@@ -125,11 +113,11 @@ public class MainActivity extends AppCompatActivity implements OnEmptyDataListen
                         .collection(this.getString(R.string.firestore_collection_user_results))
                         .document()
                         .set(data).addOnSuccessListener(aVoid -> AppDatabase.getDatabase(MainActivity.this).getDayResultDao()
-                                .syncResult(new DayResult(result.getTime()
-                                        , result.getStepLength()
-                                        , result.getStepLimit()
-                                        , result.getStepCount()
-                                        , true)));
+                        .syncResult(new DayResult(result.getTime()
+                                , result.getStepLength()
+                                , result.getStepLimit()
+                                , result.getStepCount()
+                                , true)));
             }
         }
     }

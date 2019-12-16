@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                 syncSparedPreferences(uid, true, 0, 60, 6000);
                 generateRandomStatistics();
             }
-
         });
     }
 
